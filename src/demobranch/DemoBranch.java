@@ -5,17 +5,85 @@
  */
 package demobranch;
 
+import java.util.*;
+import java.io.*;
+
 /**
  *
  * @author Mausam
  */
 public class DemoBranch {
+public static ArrayList<String> arrayword = new ArrayList<String>();
+public static ArrayList<String> arrayallwords = new ArrayList<String>(); 
 
-    /**
-     * @param args the command line arguments
-     */
-    public static void main(String[] args) {
-        // TODO code application logic here
+     public static boolean isValidFilePath(String filePath) {
+        File file = new File(filePath);
+        if (file.exists() && !file.isDirectory()) {
+            return true;
+        } else {
+            return false;
+        }
+    }
+
+    public static void Getfilepath() throws FileNotFoundException {
+        Scanner sc = new Scanner(System.in);
+        System.out.print("Input file name with extention .txt :: ");
+        String filepath = sc.next();
+        if (!isValidFilePath(filepath)) {
+            System.out.println("Please enter valid file path");
+            Getfilepath();
+        } else {
+            Readfiledata(filepath);
+        }
     }
     
+    public static void Readfiledata(String filepath) throws FileNotFoundException {
+        File inputFile = new File(filepath);
+        Scanner sc = new Scanner(inputFile);
+        while (sc.hasNext()) {
+            String words = sc.next();
+            arrayword.add(words);
+        }
+        for (int i = 0; i < arrayword.size(); i++)
+            arrayword.set(i,arrayword.get(i).replaceAll("[^a-zA-Z0-9]",""));
+        
+        while(arrayword.contains("")) 
+              arrayword.remove("");
+               
+        Getuniquewords();
+    }
+
+    public static void Getuniquewords() {
+        Set<String> uniqueWords = new HashSet<String>(arrayword);
+        arrayallwords.addAll(arrayword);
+        arrayword.removeAll(arrayword);
+        arrayword.addAll(uniqueWords);
+        Collections.sort(arrayword);
+        System.out.println("\n1. List Of unique word : \n ");
+        for (String repeatation : arrayword) {
+
+            if (Collections.frequency(arrayallwords, repeatation) == 1) {
+                System.out.println(repeatation);
+            }
+        }
+        Getcountofwords();
+    }
+    
+    public static void Getcountofwords() {
+        System.out.println("\n2. count of occurrences of each word : \n ");
+        for (String repeatation : arrayword) {
+            System.out.println(repeatation + " " + " " + Collections.frequency(arrayallwords, repeatation));
+        }
+        Getwordslength();
+    }
+    
+    public static void Getwordslength(){
+        System.out.println("\n3. Show number of letters in each word : \n ");
+        for (int i=0; i<arrayword.size(); i++) {
+            System.out.println(arrayword.get(i) + " : " + arrayword.get(i).length());
+        }
+    }
+    public static void main(String[] args) throws FileNotFoundException {
+        Getfilepath();
+    }
 }
